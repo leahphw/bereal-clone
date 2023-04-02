@@ -13,6 +13,8 @@ class PostCell: UITableViewCell {
     
     private var imageDataRequest: DataRequest?
     
+    @IBOutlet weak var blurView: UIVisualEffectView!
+    
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var postImageView: UIImageView!

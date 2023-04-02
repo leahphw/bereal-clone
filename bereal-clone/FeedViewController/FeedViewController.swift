@@ -14,6 +14,8 @@ class FeedViewController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
     
+    private let refreshControl = UIRefreshControl()
+    
     private var posts = [Post]() {
         didSet {
             // Reload table view data any time the posts variable gets updated.
@@ -27,6 +29,9 @@ class FeedViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.allowsSelection = false
+        
+        tableView.refreshControl = refreshControl
+        refreshControl.addTarget(self, action: #selector(onPullToRefresh), for: .valueChanged)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -35,10 +40,15 @@ class FeedViewController: UIViewController {
         queryPosts()
     }
 
-    private func queryPosts() {
+    private func queryPosts(completion: (() -> Void)? = nil) {
+        
+        let yesterdayDate = Calendar.current.date(byAdding: .day, value: (-1), to: Date())!
+
         let query = Post.query()
             .include("user")
             .order([.descending("createdAt")])
+            .where("createdAt" >= yesterdayDate) // <- Only include results created yesterday onwards
+            .limit(10) // <- Limit max number of returned posts to 10
 
         // Fetch objects (posts) defined in query (async)
         query.find { [weak self] result in
@@ -49,6 +59,7 @@ class FeedViewController: UIViewController {
             case .failure(let error):
                 self?.showAlert(description: error.localizedDescription)
             }
+            completion?()
         }
 
 
@@ -56,6 +67,13 @@ class FeedViewController: UIViewController {
 
     @IBAction func onLogOutTapped(_ sender: Any) {
         showConfirmLogoutAlert()
+    }
+    
+    @objc private func onPullToRefresh() {
+        refreshControl.beginRefreshing()
+        queryPosts {[weak self] in
+            self?.refreshControl.endRefreshing()
+        }
     }
     
 
