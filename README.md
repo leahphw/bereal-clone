@@ -1,4 +1,4 @@
-# Project 6 - *BeReal Clone*
+# Codepath Project - *BeReal Clone*
 
 Submitted by: **Leah Le**
 
