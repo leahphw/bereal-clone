@@ -2,7 +2,7 @@
 
 Submitted by: **Leah Le**
 
-**Name of your app** is an app that simulates the social media BeReal
+This is an app that simulates the social media BeReal
 
 Time spent: **2** hours spent in total
 
